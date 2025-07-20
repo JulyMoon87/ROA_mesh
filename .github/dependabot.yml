@@ -1,16 +1,18 @@
 https://github.com/JulyMoon87/digitalselftherapy/blob/3cddc21f229151a3279b3794ff519e9d1011ac94/.github/workflows/azure-webapps-dotnet-core.yml
 
- To get started with Dependabot version updates, you'll need to specify which
+ //To get started with Dependabot version updates, you'll need to specify which
 
- package ecosystems to update and where the package manifests are located.
+ //package ecosystems to update and where the package manifests are located.
 
-Please see the documentation for @dependabot security 
+//Please see the documentation for 
+//dependabot.yml group
+@dependabot security 
 
-version: latest
+//version: latest
 updates:
    package-ecosystem: "" 
 
-See documentation for possible values
+//See documentation for possible values
     directory: Location of package manifest
     schedule:
       interval: "daily"
