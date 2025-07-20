@@ -38,8 +38,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
     
-    # Run dotnet build and publish
-    - name: dotnet build unit test and publish
+    // Run dotnet build and publish
+      name: dotnet build unit test and publish
       run: |
         cd Application
         dotnet restore
@@ -47,11 +47,11 @@ jobs:
         dotnet test aspnet-core-dotnet-core.UnitTests/aspnet-core-dotnet-core.UnitTests.csproj
         dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/build'
 
-    - name: Archive Application
+      name: Archive Application
       run: |
         zip -qq -r ./buildartifacts/Application.zip ./Application/build
 
-    - name: Upload Application to Build Artifact
+      name: Upload Application to Build Artifact
       continue‐on‐error: true
       uses: actions/upload-artifact@v4
       with:
@@ -82,11 +82,11 @@ jobs:
         name: buildartifacts
         path: buildartifacts
 
-    - name: Unzipping Build artifact
+     name: Unzipping Build artifact
       run: |
-        unzip -qq ./buildartifacts/Application.zip -d .
+        unzip /buildartifacts/Application.zip  .
 
-    - name: Download an ARM template
+     name: Download an ARM template
       uses: actions/download-artifact@v4.1.7
       continue-on-error: true
       with:
@@ -103,15 +103,15 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Deploy ARM Template
-      uses: azure/CLI@v1
-      continue-on-error: false
+      name: Deploy ARM Template
+      uses: azure/CLI@v4
+      continue-on-error: true
       with:
         inlineScript: |
           az group create --name "${{ env.RESOURCEGROUPNAME }}" --location "${{ env.LOCATION }}"
           az deployment group create --resource-group "${{ env.RESOURCEGROUPNAME }}" --template-file ./ArmTemplates/windows-webapp-template.json --parameters webAppName="${{ env.AZURE_WEBAPP_NAME }}" hostingPlanName="${{ env.HOSTINGPLANNAME }}" appInsightsLocation="${{ env.APPINSIGHTLOCATION }}" sku="${{ env.SKU }}"
 
-    - name: 'Deploy web app'
+      name: 'Deploy web app'
       uses: azure/webapps-deploy@v4
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
@@ -123,14 +123,14 @@ jobs:
     needs: deploy
     steps:
 
-    - uses: actions/checkout@master
+     uses: actions/checkout@master
 
-    - name: Setup .NET Core
+     name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
 
-    - name: update web app url in Run Settings
+     name: update web app url in Run Settings
       shell: powershell
       run: |
         cd Application\aspnet-core-dotnet-core.FunctionalTests
@@ -138,7 +138,7 @@ jobs:
         $runSetting.RunSettings.TestRunParameters.ChildNodes.Item().value = 'https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/'
         $runSetting.Save("$(pwd)/functionalTests.runsettings")
 
-    - name: Run tests
+     name: Run tests
       continue-on-error: true
       run: |
         cd Application\aspnet-core-dotnet-core.FunctionalTests
